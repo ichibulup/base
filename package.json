@@ -1,0 +1,111 @@
+{
+  "name": "@goraricorp/base",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "import": "./dist/lib/*.js",
+      "require": "./dist/lib/*.cjs"
+    },
+    "./common/*": {
+      "types": "./dist/common/*.d.ts",
+      "import": "./dist/common/*.js",
+      "require": "./dist/common/*.cjs"
+    },
+    "./cores/*": {
+      "types": "./dist/cores/*.d.ts",
+      "import": "./dist/cores/*.js",
+      "require": "./dist/cores/*.cjs"
+    },
+    "./cores/*/*": {
+      "types": "./dist/cores/*/*.d.ts",
+      "import": "./dist/cores/*/*.js",
+      "require": "./dist/cores/*/*.cjs"
+    },
+    "./cores/*/*/*": {
+      "types": "./dist/cores/*/*/*.d.ts",
+      "import": "./dist/cores/*/*/*.js",
+      "require": "./dist/cores/*/*/*.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "cores/*": [
+        "dist/cores/*.d.ts"
+      ],
+      "cores/*/*": [
+        "dist/cores/*/*.d.ts"
+      ],
+      "cores/*/*/*": [
+        "dist/cores/*/*/*.d.ts"
+      ],
+      "common/*": [
+        "dist/common/*.d.ts"
+      ],
+      "*": [
+        "dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "tsup --minify",
+    "prepack": "pnpm build",
+    "dev": "tsup --format esm,cjs --dts --out-dir dist --watch",
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
+    "packprepare": "pnpm build",
+    "update": "pnpm update",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gorth",
+    "supabase"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@better-auth/infra": "^0.3.7",
+    "@better-auth/oauth-provider": "^1.6.25",
+    "@better-auth/scim": "^1.6.25",
+    "@better-auth/sso": "^1.6.25",
+    "@better-auth/stripe": "^1.6.25",
+    "@supabase/postgrest-js": "^2.110.8",
+    "@supabase/server": "^1.4.1",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.8",
+    "axios": "^1.18.1",
+    "better-auth": "^1.6.25",
+    "graphql": "^17.0.2",
+    "graphql-request": "^7.4.0",
+    "graphql-tag": "^2.12.7",
+    "jose": "^6.2.4",
+    "pg": "^8.22.0",
+    "postgres": "^3.4.9",
+    "svix": "^1.99.1",
+    "uuid": "^14.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.4",
+    "@types/pg": "^8.20.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.9.6",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.33.4"
+}

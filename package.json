@@ -29,106 +29,88 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-
     "./cores/lucide": {
       "types": "./dist/cores/lucide.d.ts",
       "import": "./dist/cores/lucide.js",
       "default": "./dist/cores/lucide.js"
     },
-
     "./cores/*": {
       "types": "./dist/cores/*.d.ts",
       "import": "./dist/cores/*.js",
       "default": "./dist/cores/*.js"
     },
-
     "./cores/*/*": {
       "types": "./dist/cores/*/*.d.ts",
       "import": "./dist/cores/*/*.js",
       "default": "./dist/cores/*/*.js"
     },
-
     "./lib/*": {
       "types": "./dist/lib/*.d.ts",
       "import": "./dist/lib/*.js",
       "default": "./dist/lib/*.js"
     },
-
     "./modules/*": {
       "types": "./dist/modules/*.d.ts",
       "import": "./dist/modules/*.js",
       "default": "./dist/modules/*.js"
     },
-
     "./default/*": {
       "types": "./dist/components/ui/*.d.ts",
       "import": "./dist/components/ui/*.js",
       "default": "./dist/components/ui/*.js"
     },
-
     "./pattern/*": {
       "types": "./dist/components/io/*.d.ts",
       "import": "./dist/components/io/*.js",
       "default": "./dist/components/io/*.js"
     },
-
     "./layouts/*": {
       "types": "./dist/layouts/*.d.ts",
       "import": "./dist/layouts/*.js",
       "default": "./dist/layouts/*.js"
     },
-
     "./providers/*": {
       "types": "./dist/providers/*.d.ts",
       "import": "./dist/providers/*.js",
       "default": "./dist/providers/*.js"
     },
-
     "./block/*": {
       "types": "./dist/components/block/*.d.ts",
       "import": "./dist/components/block/*.js",
       "default": "./dist/components/block/*.js"
     },
-
     "./custom/*": {
       "types": "./dist/components/custom/*.d.ts",
       "import": "./dist/components/custom/*.js",
       "default": "./dist/components/custom/*.js"
     },
-
     "./background/*": {
       "types": "./dist/components/background/*.d.ts",
       "import": "./dist/components/background/*.js",
       "default": "./dist/components/background/*.js"
     },
-
     "./element/*": {
       "types": "./dist/components/element/*.d.ts",
       "import": "./dist/components/element/*.js",
       "default": "./dist/components/element/*.js"
     },
-
     "./dashboard/*": {
       "types": "./dist/components/dashboard/*.d.ts",
       "import": "./dist/components/dashboard/*.js",
       "default": "./dist/components/dashboard/*.js"
     },
-
     "./assets/*": {
       "import": "./src/assets/*",
       "default": "./src/assets/*"
     },
-
     "./globals.css": {
       "import": "./dist/globals.css",
       "default": "./dist/globals.css"
     },
-
     "./postcss.config": {
       "import": "./postcss.config.mjs",
       "default": "./postcss.config.mjs"
     },
-
     "./package.json": "./package.json"
   },
   "files": [
@@ -216,7 +198,7 @@
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
     "tsdown": "^0.22.14",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.33.4"
 }

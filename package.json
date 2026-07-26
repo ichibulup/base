@@ -26,69 +26,127 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     },
+
     "./cores/lucide": {
       "types": "./dist/cores/lucide.d.ts",
-      "import": "./dist/cores/lucide.js"
+      "import": "./dist/cores/lucide.js",
+      "require": "./dist/cores/lucide.cjs",
+      "default": "./dist/cores/lucide.js"
     },
+
     "./cores/*": {
       "types": "./dist/cores/*.d.ts",
       "import": "./dist/cores/*.js",
-      "require": "./dist/cores/*.cjs"
+      "require": "./dist/cores/*.cjs",
+      "default": "./dist/cores/*.js"
     },
+
     "./cores/*/*": {
       "types": "./dist/cores/*/*.d.ts",
       "import": "./dist/cores/*/*.js",
-      "require": "./dist/cores/*/*.cjs"
+      "require": "./dist/cores/*/*.cjs",
+      "default": "./dist/cores/*/*.js"
     },
+
     "./lib/*": {
       "types": "./dist/lib/*.d.ts",
-      "import": "./dist/lib/*.js"
+      "import": "./dist/lib/*.js",
+      "require": "./dist/lib/*.cjs",
+      "default": "./dist/lib/*.js"
     },
+
     "./modules/*": {
       "types": "./dist/modules/*.d.ts",
-      "import": "./dist/modules/*.js"
+      "import": "./dist/modules/*.js",
+      "require": "./dist/modules/*.cjs",
+      "default": "./dist/modules/*.js"
     },
+
     "./default/*": {
       "types": "./dist/components/ui/*.d.ts",
-      "import": "./dist/components/ui/*.js"
+      "import": "./dist/components/ui/*.js",
+      "require": "./dist/components/ui/*.cjs",
+      "default": "./dist/components/ui/*.js"
     },
+
     "./pattern/*": {
       "types": "./dist/components/io/*.d.ts",
-      "import": "./dist/components/io/*.js"
+      "import": "./dist/components/io/*.js",
+      "require": "./dist/components/io/*.cjs",
+      "default": "./dist/components/io/*.js"
     },
+
     "./layouts/*": {
       "types": "./dist/layouts/*.d.ts",
-      "import": "./dist/layouts/*.js"
+      "import": "./dist/layouts/*.js",
+      "require": "./dist/layouts/*.cjs",
+      "default": "./dist/layouts/*.js"
     },
+
     "./providers/*": {
       "types": "./dist/providers/*.d.ts",
-      "import": "./dist/providers/*.js"
+      "import": "./dist/providers/*.js",
+      "require": "./dist/providers/*.cjs",
+      "default": "./dist/providers/*.js"
     },
+
     "./block/*": {
       "types": "./dist/components/block/*.d.ts",
-      "import": "./dist/components/block/*.js"
+      "import": "./dist/components/block/*.js",
+      "require": "./dist/components/block/*.cjs",
+      "default": "./dist/components/block/*.js"
     },
+
     "./custom/*": {
       "types": "./dist/components/custom/*.d.ts",
-      "import": "./dist/components/custom/*.js"
+      "import": "./dist/components/custom/*.js",
+      "require": "./dist/components/custom/*.cjs",
+      "default": "./dist/components/custom/*.js"
     },
+
     "./background/*": {
       "types": "./dist/components/background/*.d.ts",
-      "import": "./dist/components/background/*.js"
+      "import": "./dist/components/background/*.js",
+      "require": "./dist/components/background/*.cjs",
+      "default": "./dist/components/background/*.js"
     },
+
     "./element/*": {
       "types": "./dist/components/element/*.d.ts",
-      "import": "./dist/components/element/*.js"
+      "import": "./dist/components/element/*.js",
+      "require": "./dist/components/element/*.cjs",
+      "default": "./dist/components/element/*.js"
     },
+
     "./dashboard/*": {
       "types": "./dist/components/dashboard/*.d.ts",
-      "import": "./dist/components/dashboard/*.js"
+      "import": "./dist/components/dashboard/*.js",
+      "require": "./dist/components/dashboard/*.cjs",
+      "default": "./dist/components/dashboard/*.js"
     },
-    "./assets/*": "./src/assets/*",
-    "./globals.css": "./dist/globals.css",
-    "./postcss.config": "./postcss.config.mjs"
+
+    "./assets/*": {
+      "import": "./src/assets/*",
+      "require": "./src/assets/*",
+      "default": "./src/assets/*"
+    },
+
+    "./globals.css": {
+      "import": "./dist/globals.css",
+      "require": "./dist/globals.css",
+      "default": "./dist/globals.css"
+    },
+
+    "./postcss.config": {
+      "import": "./postcss.config.mjs",
+      "default": "./postcss.config.mjs"
+    },
+
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",

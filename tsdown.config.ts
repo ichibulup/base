@@ -5,7 +5,7 @@ import { defineConfig } from "tsdown"
 export default defineConfig({
   clean: true,
   dts: true,
-  bundle: true,
+  fixedExtension: false,
   // Keep shared modules (e.g. React contexts) in common chunks
   // so different entrypoints consume the same runtime instance.
   // splitting: true,
@@ -37,5 +37,7 @@ export default defineConfig({
   outDir: "dist",
   treeshake: true,
 
-  external: ["react", "react-dom"],
+  deps: {
+    neverBundle: ["react", "react-dom"],
+  },
 })

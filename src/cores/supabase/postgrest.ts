@@ -1,1 +1,0 @@
-export * from "@supabase/postgrest-js";

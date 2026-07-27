@@ -123,12 +123,10 @@ export function NavMaster({ items, ...props }: NavCoreProps) {
                 <SidebarMenuButton
                   tooltip={item.title}
                   isActive={isActive}
-                  // asChild
+                  render={<Link href={item.url} onClick={() => setOpen(true)} />}
                 >
-                  <Link href={item.url} onClick={() => setOpen(true)}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </Link>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
@@ -141,15 +139,17 @@ export function NavMaster({ items, ...props }: NavCoreProps) {
               className="group/collapsible"
             >
               <SidebarMenuItem>
-                <CollapsibleTrigger>{/* asChild */}
-                  <SidebarMenuButton
+                <CollapsibleTrigger
+                  render={
+                    <SidebarMenuButton
                     tooltip={item.title}
                     isActive={isActive}
-                  >
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
+                    />
+                  }
+                >
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
@@ -159,23 +159,21 @@ export function NavMaster({ items, ...props }: NavCoreProps) {
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
-                            // asChild
                             isActive={isSubActive}
                             onClick={() => setOpen(true)}
+                            render={<Link href={subItem.url} />}
                           >
-                            <Link href={subItem.url}>
-                              <span className="w-4 h-4 flex justify-center items-center">
-                                <span
-                                  className={cn(
-                                    "w-2 h-2 rounded-full",
-                                    isSubActive
-                                      ? "bg-professional-main"
-                                      : "bg-muted-foreground border border-background"
-                                  )}
-                                />
-                              </span>
-                              <span className="text-sm text-foreground">{subItem.title}</span>
-                            </Link>
+                            <span className="w-4 h-4 flex justify-center items-center">
+                              <span
+                                className={cn(
+                                  "w-2 h-2 rounded-full",
+                                  isSubActive
+                                    ? "bg-professional-main"
+                                    : "bg-muted-foreground border border-background"
+                                )}
+                              />
+                            </span>
+                            <span className="text-sm text-foreground">{subItem.title}</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       )

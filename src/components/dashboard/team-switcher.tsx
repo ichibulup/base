@@ -32,11 +32,14 @@ export function TeamSwitcher({ teams }: { teams: TeamProps[] }) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger>{/* asChild */}
-            <SidebarMenuButton
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
               size="lg"
               className="h-14 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
+              />
+            }
+          >
               <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-md">
                 <activeTeam.logo className="size-4" />
               </div>
@@ -45,7 +48,6 @@ export function TeamSwitcher({ teams }: { teams: TeamProps[] }) {
                 <span className="truncate text-xs">{activeTeam.plan}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"

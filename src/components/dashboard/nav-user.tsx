@@ -46,11 +46,14 @@ export function NavUserX({ user }: { user: UserProps }) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger>{/* asChild */}
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              />
+            }
+          >
               <Avatar className="">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-md">CN</AvatarFallback>
@@ -60,7 +63,6 @@ export function NavUserX({ user }: { user: UserProps }) {
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -216,14 +218,16 @@ export function NavUser({
       {type === "navbar" ? (
         <>
           <DropdownMenu>
-            <DropdownMenuTrigger>{/* asChild */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="p-0 cursor-pointer"
-              >
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="p-0 cursor-pointer"
+                />
+              }
+            >
                 <NavAvatar user={user} />
-              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -240,36 +244,28 @@ export function NavUser({
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
-                <DropdownMenuTrigger>{/* asChild */}
-                  {size === "lg" ? (
+                <DropdownMenuTrigger
+                  render={
+                    size === "lg" ? (
                     <SidebarMenuButton
                       size="lg"
                       className="h-14 data-[active=true]:bg-professional-main/24 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                    >
-                      <NavAvatar user={user} />
-                      <NavName user={user} />
-                      <ChevronsUpDown className="ml-auto size-4" />
-                    </SidebarMenuButton>
+                    />
                   ) : size === "icon" ? (
                     <SidebarMenuButton
                       size="default"
                       className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:p-0"
-                    >
-                      <NavAvatar user={user} />
-                      <NavName user={user} />
-                      <ChevronsUpDown className="ml-auto size-4" />
-                    </SidebarMenuButton>
+                    />
                   ) : (
-                    <>
-                      <SidebarMenuButton
-                        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:p-0"
-                      >
-                        <NavAvatar user={user} />
-                        <NavName user={user} />
-                        <ChevronsUpDown className="ml-auto size-4" />
-                      </SidebarMenuButton>
-                    </>
-                  )}
+                    <SidebarMenuButton
+                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:p-0"
+                    />
+                  )
+                  }
+                >
+                  <NavAvatar user={user} />
+                  <NavName user={user} />
+                  <ChevronsUpDown className="ml-auto size-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"

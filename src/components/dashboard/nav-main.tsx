@@ -295,17 +295,19 @@ export function NavMain({ items, ...props }: NavCoreProps) {
 export function NavSub({ items, ...props }: NavCoreProps) {
   const { setOpen } = useSidebar();
   const pathname = usePathname();
+  const [openItems, setOpenItems] = React.useState<Record<string, boolean>>({});
 
   return (
     <SidebarGroup {...props}>
       <SidebarMenu>
         {items.map((item: NavMainItem, idx: number) => {
+          const itemKey = `${item.title}-${item.url}-${idx}`;
           const isActive = item.url !== "#" && pathname === item.url
             || !!item.items?.some((subItem) => subItem.url !== "#" && pathname === subItem.url);
 
           if (!item.items?.length) {
             return (
-              <SidebarMenuItem key={`${item.title}-${item.url}-${idx}`}>
+              <SidebarMenuItem key={itemKey}>
                 <SidebarMenuButton
                   tooltip={item.title}
                   isActive={isActive}
@@ -320,8 +322,14 @@ export function NavSub({ items, ...props }: NavCoreProps) {
 
           return (
             <Collapsible
-              key={`${item.title}-${item.url}-${idx}`}
-              defaultOpen={isActive}
+              key={itemKey}
+              open={openItems[itemKey] ?? isActive}
+              onOpenChange={(open) => {
+                setOpenItems((current) => ({
+                  ...current,
+                  [itemKey]: open,
+                }));
+              }}
               className="group/collapsible"
             >
               <SidebarMenuItem>

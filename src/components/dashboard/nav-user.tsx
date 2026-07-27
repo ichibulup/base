@@ -23,7 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/custom/sidebar"
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/custom/button";
 import {
   BadgeCheck,
   Bell,
@@ -70,18 +70,20 @@ export function NavUserX({ user }: { user: UserProps }) {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="">CN</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
+                  </div>
                 </div>
-              </div>
-            </DropdownMenuLabel>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
@@ -131,12 +133,14 @@ export function NavUserDropdown({
     <>
       {user ? (
         <>
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <NavAvatar user={user} />
-              <NavName user={user} />
-            </div>
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="p-0 font-normal">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <NavAvatar user={user} />
+                <NavName user={user} />
+              </div>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           {auth.authenticated ? (
             <>

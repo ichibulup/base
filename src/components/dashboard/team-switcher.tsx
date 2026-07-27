@@ -36,7 +36,7 @@ export function TeamSwitcher({ teams }: { teams: TeamProps[] }) {
             render={
               <SidebarMenuButton
               size="lg"
-              className="h-14 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="h-14 data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
               />
             }
           >

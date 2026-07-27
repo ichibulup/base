@@ -50,7 +50,7 @@ export function NavUserX({ user }: { user: UserProps }) {
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
               />
             }
           >
@@ -249,16 +249,16 @@ export function NavUser({
                     size === "lg" ? (
                     <SidebarMenuButton
                       size="lg"
-                      className="h-14 data-[active=true]:bg-professional-main/24 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                      className="h-14 data-active:bg-professional-main/24 data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
                     />
                   ) : size === "icon" ? (
                     <SidebarMenuButton
                       size="default"
-                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:p-0"
+                      className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground md:p-0"
                     />
                   ) : (
                     <SidebarMenuButton
-                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:p-0"
+                      className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground md:p-0"
                     />
                   )
                   }

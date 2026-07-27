@@ -27,7 +27,7 @@ interface ColorOption {
 
 interface CustomizerState {
   base: string
-  color: string
+  paint: string
   chart: string
 }
 
@@ -99,7 +99,7 @@ const CHART_COLOR_OPTIONS: ColorOption[] = [
 
 const DEFAULT_CUSTOMIZER_STATE: CustomizerState = {
   base: BASE_COLOR_OPTIONS[0].key,
-  color: THEME_COLOR_OPTIONS[0].key,
+  paint: THEME_COLOR_OPTIONS[0].key,
   chart: CHART_COLOR_OPTIONS[0].key,
 }
 
@@ -108,19 +108,34 @@ const CUSTOMIZER_STORAGE_KEYS: Record<
   keyof CustomizerState
 > = {
   base: "base",
-  color: "color",
+  paint: "paint",
   chart: "chart",
 }
 
 function applyCustomizerState(state: CustomizerState) {
   const root = document.documentElement
   const base = BASE_COLOR_OPTIONS.find((option) => option.key === state.base)
-  const color = THEME_COLOR_OPTIONS.find((option) => option.key === state.color)
+  const paint = THEME_COLOR_OPTIONS.find((option) => option.key === state.paint)
   const chart = CHART_COLOR_OPTIONS.find((option) => option.key === state.chart)
 
-  root.style.setProperty("--base", base?.value ?? BASE_COLOR_OPTIONS[0].value)
-  root.style.setProperty("--color", color?.value ?? THEME_COLOR_OPTIONS[0].value)
-  root.style.setProperty("--chart", chart?.value ?? CHART_COLOR_OPTIONS[0].value)
+  root.style.setProperty("--base", getColorVariable(base))
+  root.style.setProperty("--paint", getColorVariable(paint))
+  root.style.setProperty("--chart", getColorVariable(chart))
+}
+
+const CUSTOM_COLOR_VARIABLES: Record<string, string> = {
+  zero: "var(--color-professional-main)",
+  first: "var(--color-professional-primary-1)",
+  second: "var(--color-professional-primary-2)",
+  third: "var(--color-professional-primary-3)",
+  fourth: "var(--color-professional-primary-4)",
+  fifth: "var(--color-professional-primary-5)",
+}
+
+function getColorVariable(option?: ColorOption) {
+  if (!option) return "var(--color-neutral-500)"
+
+  return CUSTOM_COLOR_VARIABLES[option.key] ?? `var(--color-${option.key}-500)`
 }
 
 function getStoredColorKey(
@@ -198,10 +213,10 @@ export function Customizer({
         BASE_COLOR_OPTIONS,
         DEFAULT_CUSTOMIZER_STATE.base,
       ),
-      color: getStoredColorKey(
-        CUSTOMIZER_STORAGE_KEYS.color,
+      paint: getStoredColorKey(
+        CUSTOMIZER_STORAGE_KEYS.paint,
         THEME_COLOR_OPTIONS,
-        DEFAULT_CUSTOMIZER_STATE.color,
+        DEFAULT_CUSTOMIZER_STATE.paint,
       ),
       chart: getStoredColorKey(
         CUSTOMIZER_STORAGE_KEYS.chart,
@@ -211,6 +226,7 @@ export function Customizer({
     }
 
     window.localStorage.removeItem("customizer_state")
+    window.localStorage.removeItem("color")
     Object.entries(storedCustomizer).forEach(([key, value]) => {
       window.localStorage.setItem(key, value)
     })
@@ -270,8 +286,8 @@ export function Customizer({
           <ColorGroup
             label="Theme Color"
             options={THEME_COLOR_OPTIONS}
-            value={customizer.color}
-            onValueChange={(value) => setColor("color", value)}
+            value={customizer.paint}
+            onValueChange={(value) => setColor("paint", value)}
           />
           <ColorGroup
             label="Chart Color"

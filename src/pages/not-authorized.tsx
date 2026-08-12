@@ -11,7 +11,7 @@ export default function NotAuthorizedPage() {
           <h1 className="mx-2 mb-2 text-8xl leading-none font-medium">401</h1>
           <h4 className="mx-2 mb-2 text-2xl font-medium tracking-tight">You are not authorized! 🔐</h4>
           <p className="mb-6 mx-2">You don’t have permission to access this page. Go Home!</p>
-          <Button render={<Link href="/" />}>
+          <Button nativeButton={false} render={<Link href="/" />}>
             Back to home
           </Button>
           <div className="mt-6">

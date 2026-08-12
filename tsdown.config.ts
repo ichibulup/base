@@ -20,6 +20,8 @@ export default defineConfig({
     "src/lib/**/*.tsx",
     "src/cores/**/*.ts",
     "src/modules/*.ts",
+    "src/assets/**/*.ts",
+    "src/assets/**/*.tsx",
     "src/assets/*.png",
     "src/assets/*.jpg",
     "src/assets/*.jpeg",

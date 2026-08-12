@@ -38,7 +38,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "text-base leading-normal font-medium group-data-[size=sm]/card:text-sm",
+        "font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm",
         className
       )}
       {...props}
@@ -73,7 +73,7 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-content"
-      className={cn("px-(--card-spacing)", className)}
+      className={cn("flex flex-col gap-3 px-(--card-spacing)", className)}
       {...props}
     />
   )

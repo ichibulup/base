@@ -4,6 +4,7 @@ import {
   type CSSProperties,
   type SVGProps,
 } from 'react'
+import type { VariantProps } from 'class-variance-authority'
 import { RadioPrimitive, RadioGroupPrimitive } from '@/components/custom/radio'
 import { useTheme } from 'next-themes'
 import {
@@ -28,7 +29,7 @@ import { IconThemeSystem } from '@/assets/custom/icon-theme-system'
 import { cn } from '@/lib/utils'
 import { useDirection } from '@/providers/direction'
 import { type Collapsible, useLayout } from '@/providers/layout'
-import { Button } from '@/components/custom/button'
+import { Button, buttonVariants } from '@/components/custom/button'
 import { Badge } from '@/components/custom/badge'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -43,7 +44,17 @@ import {
 } from '@/components/ui/sheet'
 import { useSidebar } from '@/components/custom/sidebar'
 
-export function Customizer() {
+export interface CustomizerProps {
+  className?: string
+  variant?: VariantProps<typeof buttonVariants>['variant']
+  size?: VariantProps<typeof buttonVariants>['size']
+}
+
+export function Customizer({
+  className,
+  variant = 'ghost',
+  size = 'icon',
+}: CustomizerProps) {
   const { setOpen } = useSidebar()
   const { customizer, resetCustomizer, setColor } = useCustomizer()
   const { resetDir } = useDirection()
@@ -63,10 +74,10 @@ export function Customizer() {
       <SheetTrigger
         render={
           <Button
-            size='icon'
-            variant='ghost'
+            size={size}
+            variant={variant}
+            className={className}
             aria-label='Open theme settings'
-            className='rounded-full'
           />
         }
       >
@@ -99,6 +110,7 @@ export function Customizer() {
     </Sheet>
   )
 }
+
 function ColorGroup({
   label,
   options,
@@ -131,7 +143,7 @@ function ColorGroup({
             className={cn(
               'group relative flex size-9 cursor-pointer items-center justify-center rounded-md border border-border bg-transparent p-0 shadow-none outline-none',
               'transition-shadow focus-visible:ring-2 focus-visible:ring-ring',
-              'data-checked:ring-3 data-checked:ring-offset-2 data-checked:ring-offset-background'
+              'data-checked:ring-2 data-checked:ring-offset-2 data-checked:ring-offset-background'
             )}
             style={
               {
@@ -256,7 +268,7 @@ function RadioGroupItem({
         data-slot='drawer-radio-preview'
         className={cn(
           'relative rounded-md border border-border',
-          'group-data-checked:ring-3 group-data-checked:ring-primary group-data-checked:ring-offset-2 group-data-checked:ring-offset-background',
+          'group-data-checked:ring-2 group-data-checked:ring-primary group-data-checked:ring-offset-2 group-data-checked:ring-offset-background',
           'group-focus-visible:ring-2 group-focus-visible:ring-ring'
         )}
         role='img'

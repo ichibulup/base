@@ -12,10 +12,8 @@ export default function InternalServerErrorPage() {
           {/* <h4 className="mx-2 mb-2 text-2xl font-medium tracking-tight">Internal Server Error! �️</h4> */}
           <h4 className="mx-2 mb-2 text-2xl font-medium tracking-tight">Oops! Something went wrong :'{`)`}</h4>
           <p className="mb-6 mx-2">We apologize for the inconvenience. Please try again later.</p>
-          <Button className="">
-            <Link href="/">
-              Back to home
-            </Link>
+          <Button render={<Link href="/" />}>
+            Back to home
           </Button>
           <div className="mt-6">
             <Image src={imageUnderMaintenance} alt="page-misc" width={512} height={512} loading="eager" className="h-auto w-auto max-w-full visible"/>

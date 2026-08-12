@@ -79,6 +79,11 @@
       "import": "./dist/providers/*.js",
       "default": "./dist/providers/*.js"
     },
+    "./pages/*": {
+      "types": "./dist/pages/*.d.ts",
+      "import": "./dist/pages/*.js",
+      "default": "./dist/pages/*.js"
+    },
     "./block/*": {
       "types": "./dist/components/block/*.d.ts",
       "import": "./dist/components/block/*.js",

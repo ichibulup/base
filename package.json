@@ -1,11 +1,11 @@
 {
   "name": "@goraricorp/base",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Shared shadcn-based UI package",
   "type": "module",
   "author": "Ichibulup",
   "license": "GORTH",
-  "private": true,
+  "private": false,
   "keywords": [
     "gorth",
     "shadcn",
@@ -210,6 +210,9 @@
     "tailwindcss": "^4.3.3",
     "tsdown": "^0.23.0",
     "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "packageManager": "bun@1.4.2"
 }

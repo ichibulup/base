@@ -1,6 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo } from "react"
+
+import { useCookie } from "@/hooks/use-cookie"
+import { getCookie, removeCookie } from "@/lib/cookies"
 
 export type ColorOption = {
   key: string
@@ -9,12 +12,12 @@ export type ColorOption = {
 }
 
 export type CustomizerState = {
-  base: string
+  ground: string
   paint: string
   chart: string
 }
 
-export const BASE_COLOR_OPTIONS: ColorOption[] = [
+export const GROUND_COLOR_OPTIONS: ColorOption[] = [
   { key: "neutral", label: "Neutral", value: "oklch(0.556 0 0)" },
   { key: "stone", label: "Stone", value: "oklch(0.553 0.013 58.071)" },
   { key: "zinc", label: "Zinc", value: "oklch(0.552 0.016 285.938)" },
@@ -25,7 +28,11 @@ export const BASE_COLOR_OPTIONS: ColorOption[] = [
 ]
 
 export const THEME_COLOR_OPTIONS: ColorOption[] = [
-  { key: "neutral", label: "Neutral", value: "#737373" },
+  {
+    key: "primary",
+    label: "Primary",
+    value: "var(--foreground)",
+  },
   { key: "amber", label: "Amber", value: "#f59e0b" },
   { key: "blue", label: "Blue", value: "#3b82f6" },
   { key: "cyan", label: "Cyan", value: "#06b6d4" },
@@ -52,7 +59,7 @@ export const THEME_COLOR_OPTIONS: ColorOption[] = [
 ]
 
 export const CHART_COLOR_OPTIONS: ColorOption[] = [
-  { key: "neutral", label: "Neutral", value: "oklch(0.556 0 0)" },
+  { key: "neutral", label: "Neutral", value: "var(--foreground)" },
   { key: "amber", label: "Amber", value: "oklch(0.769 0.188 70.08)" },
   { key: "blue", label: "Blue", value: "oklch(0.623 0.214 259.815)" },
   { key: "cyan", label: "Cyan", value: "oklch(0.715 0.143 215.221)" },
@@ -79,26 +86,27 @@ export const CHART_COLOR_OPTIONS: ColorOption[] = [
 ]
 
 export const DEFAULT_CUSTOMIZER_STATE: CustomizerState = {
-  base: BASE_COLOR_OPTIONS[0].key,
+  ground: GROUND_COLOR_OPTIONS[0].key,
   paint: THEME_COLOR_OPTIONS[0].key,
   chart: CHART_COLOR_OPTIONS[0].key,
 }
 
 const STORAGE_KEYS: Record<keyof CustomizerState, string> = {
-  base: "base",
-  paint: "paint",
-  chart: "chart",
+  ground: "color-ground",
+  paint: "color-paint",
+  chart: "color-chart",
 }
 
 const OPTION_GROUPS: Record<keyof CustomizerState, ColorOption[]> = {
-  base: BASE_COLOR_OPTIONS,
+  ground: GROUND_COLOR_OPTIONS,
   paint: THEME_COLOR_OPTIONS,
   chart: CHART_COLOR_OPTIONS,
 }
 
-const CUSTOMIZER_STYLE_ID = "gorth-customizer-variables"
-
-function validateKey(key: keyof CustomizerState, value: string | null) {
+function validateKey(
+  key: keyof CustomizerState,
+  value: string | null | undefined
+) {
   return OPTION_GROUPS[key].some(
     (option) => option.key === value || option.value === value
   )
@@ -110,74 +118,70 @@ function validateKey(key: keyof CustomizerState, value: string | null) {
 
 function applyCustomizerState(state: CustomizerState) {
   const root = document.documentElement
-  const base = BASE_COLOR_OPTIONS.find((option) => option.key === state.base)!
-  const paint = THEME_COLOR_OPTIONS.find((option) => option.key === state.paint)!
-  const chart = CHART_COLOR_OPTIONS.find((option) => option.key === state.chart)!
 
-  let style = document.getElementById(CUSTOMIZER_STYLE_ID) as
-    | HTMLStyleElement
-    | null
-
-  if (!style) {
-    style = document.createElement("style")
-    style.id = CUSTOMIZER_STYLE_ID
-    document.head.appendChild(style)
-  }
-
-  const variables = `--base: ${base.value}; --paint: ${paint.value}; --chart: ${chart.value};`
-  style.textContent = `:root { ${variables} } .dark { ${variables} }`
-
-  root.style.setProperty("--base", base.value)
-  root.style.setProperty("--paint", paint.value)
-  root.style.setProperty("--chart", chart.value)
+  Object.entries(state).forEach(([key, value]) => {
+    root.setAttribute(STORAGE_KEYS[key as keyof CustomizerState], value)
+  })
 }
 
 export function useCustomizer() {
-  const [customizer, setCustomizer] = useState(DEFAULT_CUSTOMIZER_STATE)
+  const groundCookie = useCookie(
+    STORAGE_KEYS.ground,
+    DEFAULT_CUSTOMIZER_STATE.ground
+  )
+  const paintCookie = useCookie(
+    STORAGE_KEYS.paint,
+    DEFAULT_CUSTOMIZER_STATE.paint
+  )
+  const chartCookie = useCookie(
+    STORAGE_KEYS.chart,
+    DEFAULT_CUSTOMIZER_STATE.chart
+  )
+  const customizer = useMemo<CustomizerState>(
+    () => ({
+      ground: validateKey("ground", groundCookie.value),
+      paint: validateKey("paint", paintCookie.value),
+      chart: validateKey("chart", chartCookie.value),
+    }),
+    [groundCookie.value, chartCookie.value, paintCookie.value]
+  )
 
   useEffect(() => {
-    const stored = Object.fromEntries(
-      (Object.keys(STORAGE_KEYS) as (keyof CustomizerState)[]).map((key) => [
-        key,
-        validateKey(key, window.localStorage.getItem(STORAGE_KEYS[key])),
-      ])
-    ) as unknown as CustomizerState
+    if (!groundCookie.ready || !paintCookie.ready || !chartCookie.ready) return
 
-    window.localStorage.removeItem("customizer_state")
-    window.localStorage.removeItem("color")
-    Object.entries(stored).forEach(([key, value]) =>
-      window.localStorage.setItem(STORAGE_KEYS[key as keyof CustomizerState], value)
-    )
-    applyCustomizerState(stored)
-    queueMicrotask(() => setCustomizer(stored))
-  }, [])
+    const previousValue = getCookie("color-base")
+    if (previousValue !== undefined) {
+      if (getCookie(STORAGE_KEYS.ground) === undefined) {
+        groundCookie.setValue(validateKey("ground", previousValue))
+      }
+      removeCookie("color-base")
+    }
+    applyCustomizerState(customizer)
+  }, [
+    groundCookie.ready,
+    chartCookie.ready,
+    customizer,
+    paintCookie.ready,
+    groundCookie.setValue,
+  ])
 
   const setColor = useCallback(
     (key: keyof CustomizerState, value: string) => {
       const validatedValue = validateKey(key, value)
-      setCustomizer((current) => {
-        const next = { ...current, [key]: validatedValue }
-        window.localStorage.setItem(STORAGE_KEYS[key], validatedValue)
-        applyCustomizerState(next)
-        return next
-      })
+
+      if (key === "ground") groundCookie.setValue(validatedValue)
+      if (key === "paint") paintCookie.setValue(validatedValue)
+      if (key === "chart") chartCookie.setValue(validatedValue)
     },
-    []
+    [groundCookie.setValue, chartCookie.setValue, paintCookie.setValue]
   )
 
   const resetCustomizer = useCallback(() => {
-    Object.values(STORAGE_KEYS).forEach((key) =>
-      window.localStorage.removeItem(key)
-    )
-    window.localStorage.removeItem("customizer_state")
-    window.localStorage.removeItem("color")
-    document.getElementById(CUSTOMIZER_STYLE_ID)?.remove()
-    const root = document.documentElement
-    root.style.removeProperty("--base")
-    root.style.removeProperty("--paint")
-    root.style.removeProperty("--chart")
-    setCustomizer(DEFAULT_CUSTOMIZER_STATE)
-  }, [])
+    groundCookie.resetValue()
+    paintCookie.resetValue()
+    chartCookie.resetValue()
+    applyCustomizerState(DEFAULT_CUSTOMIZER_STATE)
+  }, [groundCookie.resetValue, chartCookie.resetValue, paintCookie.resetValue])
 
   return { customizer, resetCustomizer, setColor }
 }

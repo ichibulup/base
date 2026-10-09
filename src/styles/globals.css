@@ -1,9 +1,11 @@
-@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./base.css";
+@import "./paint.css";
+@import "./chart.css";
 
 @custom-variant dark (&:is(.dark *));
-@source "../**/*.{ts,tsx}";
+@source "../";
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -87,7 +89,7 @@
   --color-professional-gray: var(--professional-gray);
   --color-professional-gray-dark: var(--professional-gray-dark);
 
-  --color-base: var(--base);
+  --color-ground: var(--ground);
   --color-paint: var(--paint);
   --color-chart: var(--chart);
 }
@@ -176,7 +178,7 @@
   --professional-gray: #7a838b;
   --professional-gray-dark: #4e5965;
 
-  --base: oklch(0.556 0 0);
+  --ground: oklch(0.556 0 0);
   --paint: #737373;
   --chart: oklch(0.556 0 0);
 }
@@ -264,7 +266,7 @@
   --professional-gray: #7a838b;
   --professional-gray-dark: #4e5965;
 
-  --base: oklch(0.556 0 0);
+  --ground: oklch(0.556 0 0);
   --paint: #737373;
   --chart: oklch(0.556 0 0);
 }
@@ -277,10 +279,16 @@
     @apply bg-background text-foreground;
   }
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
+    [role="button"]:not(:disabled) {
+      cursor: pointer;
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  :root[wide="wide"] .container {
+    max-width: none;
   }
 }

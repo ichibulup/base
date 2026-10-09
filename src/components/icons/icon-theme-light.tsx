@@ -1,6 +1,6 @@
 import { type SVGProps } from 'react'
-import { IconThemeSystem } from '@/assets/custom/icon-theme-system'
-import { cn } from '@/lib/utils'
+import { IconThemeSystem } from '@/components/icons/icon-theme-system'
+import { cn } from 'cn'
 
 export function IconThemeLight({
   className,

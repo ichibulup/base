@@ -1,13 +1,26 @@
-import React, { ComponentProps, ComponentType, ElementType, ReactNode } from "react";
-import { Sidebar } from "@/components/ui/sidebar";
-import { LucideIcon } from "lucide-react";
+import React, {
+  ComponentProps,
+  ComponentType,
+  ElementType,
+  ReactNode,
+} from "react";
 import {
-  Table as TanStackTable,
   Column,
-  ColumnDef
+  ColumnDef,
+  ColumnFiltersState,
+  OnChangeFn,
+  PaginationState,
+  ReactTable,
+  RowData,
+  RowModel,
+  SortingState,
+  Table,
+  TableFeature,
+  TableFeatures,
+  TableOptions,
 } from "@tanstack/react-table";
-import { SidebarGroup } from "@/components/custom/sidebar";
-import { navigation } from "@/layouts/navbar";
+import { LucideIcon } from "lucide-react";
+import { Sidebar, SidebarGroup } from "@/components/custom/sidebar";
 
 // ============================================================================
 // SIDEBAR INTERFACES
@@ -22,15 +35,16 @@ export interface NavMainItem {
 }
 
 export interface NavSubItem {
-  title: string
-  url: string
-  description?: string
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  description?: string;
 }
 
 export interface NavDropdown {
-  main: NavMainItem[]
-  secondary: NavMainItem[]
-  navigation?: NavMainItem[]
+  main: NavMainItem[];
+  secondary: NavMainItem[];
+  navigation?: NavMainItem[];
 }
 
 export interface NavMessage {
@@ -52,7 +66,7 @@ export interface UserProps {
 }
 
 export interface AppSidebarUserProps {
-  user?: any | null;
+  user: UserProps;
   nav: NavDropdown;
   auth: AuthSidebarProps;
   type?: "sidebar" | "navbar";
@@ -62,50 +76,50 @@ export interface AppSidebarUserProps {
 }
 
 export interface SidebarProps {
-  user: UserProps
-  navMain: NavMainItem[]
-  navSecondary: NavMainItem[]
-  navDropdown: NavMainItem[]
-  navSignal: NavMainItem[]
-  projects: ProjectProps[]
-  teams?: TeamProps[]
-  brand?: BrandProps
+  user: UserProps;
+  navMain: NavMainItem[];
+  navSecondary: NavMainItem[];
+  navDropdown: NavMainItem[];
+  navSignal: NavMainItem[];
+  projects: ProjectProps[];
+  teams?: TeamProps[];
+  brand?: BrandProps;
 }
 
 export interface MessageProps {
-  user: UserProps
-  navMain: NavMainItem[]
+  user: UserProps;
+  navMain: NavMainItem[];
   // navSecondary: NavMainItem[]
-  navDropdown: NavMainItem[]
-  navSignal: NavMainItem[]
+  navDropdown: NavMainItem[];
+  navSignal: NavMainItem[];
   // projects: ProjectProps[]
   // teams?: TeamProps[]
-  navMessage: NavMessage[]
-  brand?: BrandProps
+  navMessage: NavMessage[];
+  brand?: BrandProps;
 }
 
 export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  data: SidebarProps,
-  auth: AuthSidebarProps,
+  data: SidebarProps;
+  auth: AuthSidebarProps;
 }
 
 export interface MessSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  data: MessageProps,
-  auth: AuthSidebarProps,
+  data: MessageProps;
+  auth: AuthSidebarProps;
 }
 
-export interface NavCoreProps extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
+// export interface NavCoreProps extends React.ComponentPropsWithoutRef<typeof SidebarGroup>
+export interface NavCoreProps extends ComponentProps<typeof SidebarGroup> {
   items: NavMainItem[];
 }
 
 export interface AuthSidebarProps {
-  // account: AuthUser | null
-  loading: boolean
-  authenticated: boolean
+  loading: boolean;
+  authenticated: boolean;
   // refresh: () => Promise<AuthUser | null>
-  login: (returnTo?: string) => void
-  register: (returnTo?: string) => void
-  logout: (returnTo?: string) => Promise<void>
+  login: (returnTo?: string) => void;
+  register: (returnTo?: string) => void;
+  logout: (returnTo?: string) => Promise<void>;
 }
 
 export interface AppSidebarPropsX extends ComponentProps<typeof Sidebar> {
@@ -119,26 +133,26 @@ export interface AppSidebarPropsX extends ComponentProps<typeof Sidebar> {
     name: string;
     description: string;
   };
-  user?: any | null;
+  user: UserProps;
   // user: AppSidebarUser;
 }
 
 export interface ProjectProps {
-  name: string
-  url: string
-  icon: LucideIcon
+  name: string;
+  url: string;
+  icon: LucideIcon;
 }
 
 export interface TeamProps {
-  name: string
-  logo: React.ElementType
-  plan: string
+  name: string;
+  logo: ElementType;
+  plan: string;
 }
 
 export interface BrandProps {
-  name: string
-  logo: string | undefined
-  plan?: string | undefined
+  name: string;
+  logo: string | undefined; // ?
+  plan?: string | undefined;
 }
 
 export interface TeamSwitcherProps {
@@ -148,11 +162,20 @@ export interface TeamSwitcherProps {
 export interface HeaderProps {
   top?: ReactNode;
   bottom?: ReactNode;
-  left: ReactNode;
-  right: ReactNode;
-  user?: any | null;
+  left?: ReactNode;
+  right?: ReactNode;
+  user: UserProps;
   auth: AuthSidebarProps;
+  nav: NavDropdown;
+  mode?: "navbar" | "dashboard"
+}
+
+export interface FooterProps {
+  top?: ReactNode
+  middle?: ReactNode
+  bottom?: ReactNode
   nav: NavDropdown
+  mode?: "navbar" | "dashboard"
 }
 
 // ============================================================================
@@ -160,16 +183,158 @@ export interface HeaderProps {
 // ============================================================================
 
 export interface StatsBoxProps {
-  title: string
-  description: string
-  icon: LucideIcon
-  color?: string
-  stats: string | number
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  color?: string;
+  stats: string | number;
 }
 
 export interface BadgeIconProps {
-  color?: string
-  icon: LucideIcon
+  color?: string;
+  icon: LucideIcon;
+}
+
+// ============================================================================
+// DATATABLES INTERFACES
+// ============================================================================
+
+export interface DataTableFeatures {
+  columnFilteringFeature: TableFeature;
+  rowSortingFeature: TableFeature;
+  rowPaginationFeature: TableFeature;
+  rowSelectionFeature: TableFeature;
+  columnVisibilityFeature: TableFeature;
+  columnSizingFeature: TableFeature;
+  columnResizingFeature: TableFeature;
+  columnFacetingFeature: TableFeature;
+  filteredRowModel: (table: Table<any, any>) => () => RowModel<any, any>;
+  sortedRowModel: (table: Table<any, any>) => () => RowModel<any, any>;
+  paginatedRowModel: (table: Table<any, any>) => () => RowModel<any, any>;
+  facetedRowModel: (
+    table: Table<any, any>,
+    columnId: string,
+  ) => () => RowModel<any, any>;
+  facetedUniqueValues: (
+    table: Table<TableFeatures, any>,
+    columnId: string,
+  ) => () => Map<any, number>;
+}
+
+export interface DataTableFilterOption {
+  label: string;
+  value: string | number | boolean;
+  icon?: ComponentType<{ className?: string }>;
+}
+
+export type DataTableFilterValue = string | number | boolean;
+
+export interface DataTableFilterAll {
+  column: string;
+  title?: string;
+  options: DataTableFilterOption[];
+}
+
+export interface DataTableSearchAll {
+  column: string;
+  placeholder: string;
+}
+
+export interface DataTableFilter {
+  id: string;
+  title?: string;
+  options: DataTableFilterOption[];
+  value: DataTableFilterValue[];
+  onValueChange: (value: DataTableFilterValue[]) => void;
+  getCount?: (value: DataTableFilterValue) => number | undefined;
+}
+
+export interface DataTableSearch {
+  placeholder: string;
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
+export interface DataTableBaseProps<TData extends RowData> {
+  columns: ColumnDef<DataTableFeatures, TData, any>[];
+  data: TData[];
+  fluidColumn?: string;
+  pageSizeOptions?: number[];
+  getRowId?: TableOptions<DataTableFeatures, TData>["getRowId"];
+  enableRowSelection?: TableOptions<
+    DataTableFeatures,
+    TData
+  >["enableRowSelection"];
+  emptyMessage?: ReactNode;
+  onRowClick?: (row: TData) => void;
+  onReload?: () => void;
+  onDownload?: () => void;
+  onCreate?: () => void;
+  render?: ReactNode;
+}
+
+export interface DataTableAllProps<TData extends RowData>
+  extends DataTableBaseProps<TData> {
+  search?: DataTableSearchAll;
+  filters?: DataTableFilterAll[];
+  initialPageSize?: number;
+}
+
+export interface DataTableProps<TData extends RowData>
+  extends DataTableBaseProps<TData> {
+  rowCount: number;
+  pagination: PaginationState;
+  onPaginationChange: OnChangeFn<PaginationState>;
+  search?: DataTableSearch;
+  filters?: DataTableFilter[];
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  columnFilters?: ColumnFiltersState;
+  onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+  loading?: boolean;
+  loadingMessage?: ReactNode;
+}
+
+export interface DataTableColumnHeaderProps<
+  TData extends RowData,
+  TValue = unknown,
+> extends React.HTMLAttributes<HTMLDivElement> {
+  column: Column<DataTableFeatures, TData, TValue>;
+  title: string;
+}
+
+export interface DataTableSortButtonProps<
+  TData extends RowData,
+  TValue = unknown,
+> extends DataTableColumnHeaderProps<TData, TValue> { }
+
+export interface DataTablePaginationAllProps<TData extends RowData> {
+  table: ReactTable<DataTableFeatures, TData>;
+  onPageChangeStart?: () => void;
+}
+
+export interface DataTablePaginationProps<TData extends RowData>
+  extends DataTablePaginationAllProps<TData> { }
+
+export interface DataTableViewOptionsProps<TData extends RowData> {
+  table: ReactTable<DataTableFeatures, TData>;
+}
+
+export interface DataTableFacetedFilterAllProps<
+  TData extends RowData,
+  TValue = unknown,
+> {
+  column?: Column<DataTableFeatures, TData, TValue>;
+  title?: string;
+  options: DataTableFilterOption[];
+}
+
+export interface DataTableFacetedFilterProps {
+  title?: string;
+  options: DataTableFilterOption[];
+  value: DataTableFilterValue[];
+  onValueChange: (value: DataTableFilterValue[]) => void;
+  getCount?: (value: DataTableFilterValue) => number | undefined;
 }
 
 // ============================================================================
@@ -375,59 +540,3 @@ export interface BadgeIconProps {
 //   data?: TData
 //   message?: string
 // }
-
-// ============================================================================
-// DATATABLES INTERFACES
-// ============================================================================
-
-export interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  search: {
-    column: string
-    placeholder: string
-  }
-  filter?: {
-    column: string
-    title?: string
-    options: {
-      label: string
-      value: string | number | boolean
-      icon?: ComponentType<{
-        className?: string | undefined;
-      }> | undefined
-    }[]
-  }[]
-  max?: string
-  onReload?: () => void
-  onDownload?: () => void
-  onCreate?: () => void
-  onUpdate?: (category: any) => void
-  onChange?: () => void
-}
-
-export interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>
-  title: string
-}
-
-export interface DataTableSortButtonProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>
-  title: string
-}
-
-export interface DataTablePaginationProps<TData> {
-  table: TanStackTable<TData>
-}
-
-export interface DataTableFacetedFilterProps<TData, TValue> {
-  column?: Column<TData, TValue>
-  title?: string
-  options: {
-    label: string
-    value: string | number | boolean
-    icon?: React.ComponentType<{ className?: string }>
-  }[]
-}

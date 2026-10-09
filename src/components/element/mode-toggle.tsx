@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { useTheme } from "next-themes"
+import { useTheme } from "@/providers/theme"
 import { Button } from "@/components/custom/button"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/custom/dropdown"
 import { MoonStar, Moon, Sun, Monitor } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 export function ModeSwitcher({
   className,

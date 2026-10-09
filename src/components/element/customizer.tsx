@@ -3,46 +3,67 @@
 import {
   type CSSProperties,
   type SVGProps,
+  useState,
 } from 'react'
 import type { VariantProps } from 'class-variance-authority'
 import { RadioPrimitive, RadioGroupPrimitive } from '@/components/custom/radio'
-import { useTheme } from 'next-themes'
+import { useTheme } from '@/providers/theme'
 import {
-  BASE_COLOR_OPTIONS,
+  GROUND_COLOR_OPTIONS,
   CHART_COLOR_OPTIONS,
+  DEFAULT_CUSTOMIZER_STATE,
   THEME_COLOR_OPTIONS,
   type ColorOption,
   type CustomizerState,
   useCustomizer,
 } from '@/hooks/use-customizer'
-import { CircleCheck, RotateCcw, Settings } from 'lucide-react'
-import { IconDir } from '@/assets/custom/icon-dir'
-import { IconLayoutCompact } from '@/assets/custom/icon-layout-compact'
-import { IconLayoutDefault } from '@/assets/custom/icon-layout-default'
-import { IconLayoutFull } from '@/assets/custom/icon-layout-full'
-import { IconSidebarFloating } from '@/assets/custom/icon-sidebar-floating'
-import { IconSidebarInset } from '@/assets/custom/icon-sidebar-inset'
-import { IconSidebarSidebar } from '@/assets/custom/icon-sidebar-sidebar'
-import { IconThemeDark } from '@/assets/custom/icon-theme-dark'
-import { IconThemeLight } from '@/assets/custom/icon-theme-light'
-import { IconThemeSystem } from '@/assets/custom/icon-theme-system'
-import { cn } from '@/lib/utils'
+import { Check, CircleCheck, RotateCcw, Settings, X } from 'lucide-react'
+import { IconDir } from '@/components/icons/icon-dir'
+import { IconLayoutCompact } from '@/components/icons/icon-layout-compact'
+import { IconLayoutDefault } from '@/components/icons/icon-layout-default'
+import { IconLayoutFull } from '@/components/icons/icon-layout-full'
+import { IconSidebarFloating } from '@/components/icons/icon-sidebar-floating'
+import { IconSidebarInset } from '@/components/icons/icon-sidebar-inset'
+import { IconSidebarSidebar } from '@/components/icons/icon-sidebar-sidebar'
+import { IconThemeDark } from '@/components/icons/icon-theme-dark'
+import { IconThemeLight } from '@/components/icons/icon-theme-light'
+import { IconThemeSystem } from '@/components/icons/icon-theme-system'
+import { IconNavbarScroll } from '@/components/icons/icon-navbar-scroll'
+import { IconNavbarSticky } from '@/components/icons/icon-navbar-sticky'
+import { IconWidthCentered } from '@/components/icons/icon-width-centered'
+import { IconWidthFull } from '@/components/icons/icon-width-full'
+import { cn } from 'cn'
 import { useDirection } from '@/providers/direction'
-import { type Collapsible, useLayout } from '@/providers/layout'
+import {
+  type Collapsible,
+  type LayoutWidth,
+  type NavbarBehavior,
+  useLayout,
+} from '@/providers/layout'
 import { Button, buttonVariants } from '@/components/custom/button'
 import { Badge } from '@/components/custom/badge'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/custom/drawer'
+import { useSidebar } from '@/components/custom/sidebar'
+import { useIsMobile } from '@/hooks/use-mobile'
+import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { useSidebar } from '@/components/custom/sidebar'
+} from '@/components/custom/sheet'
 
 export interface CustomizerProps {
   className?: string
@@ -55,11 +76,34 @@ export function Customizer({
   variant = 'ghost',
   size = 'icon',
 }: CustomizerProps) {
-  const { setOpen } = useSidebar()
+  const isMobile = useIsMobile()
+  const [customizerOpen, setCustomizerOpen] = useState(false)
+  const { open, setOpen } = useSidebar()
   const { customizer, resetCustomizer, setColor } = useCustomizer()
-  const { resetDir } = useDirection()
-  const { setTheme } = useTheme()
-  const { resetLayout } = useLayout()
+  const { defaultDir, dir, resetDir } = useDirection()
+  const { setTheme, theme } = useTheme()
+  const {
+    collapsible,
+    defaultCollapsible,
+    defaultNavbarBehavior,
+    defaultVariant,
+    defaultWidth,
+    navbarBehavior,
+    resetLayout,
+    variant: layoutVariant,
+    width,
+  } = useLayout()
+  const showReset =
+    theme !== 'system' ||
+    dir !== defaultDir ||
+    !open ||
+    collapsible !== defaultCollapsible ||
+    layoutVariant !== defaultVariant ||
+    width !== defaultWidth ||
+    navbarBehavior !== defaultNavbarBehavior ||
+    customizer.ground !== DEFAULT_CUSTOMIZER_STATE.ground ||
+    customizer.paint !== DEFAULT_CUSTOMIZER_STATE.paint ||
+    customizer.chart !== DEFAULT_CUSTOMIZER_STATE.chart
 
   const handleReset = () => {
     setOpen(true)
@@ -69,45 +113,105 @@ export function Customizer({
     resetCustomizer()
   }
 
+  const customizerBody = (
+    <div className='no-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto p-4'>
+      <ThemeConfig />
+      <SidebarConfig />
+      <LayoutConfig />
+      <DirConfig />
+      <WidthConfig />
+      <NavbarBehaviorConfig />
+      <Separator className='-mx-4 my-2 shrink-0' />
+      <CustomizerConfig customizer={customizer} setColor={setColor} />
+    </div>
+  )
+
+  const resetButton = showReset ? (
+    <Button
+      size='icon'
+      variant='destructive'
+      onClick={handleReset}
+      aria-label='Reset all settings to default values'
+    >
+      <RotateCcw className='size-4' />
+    </Button>
+  ) : null
+
+  if (!isMobile) {
+    return (
+      <Sheet open={customizerOpen} onOpenChange={setCustomizerOpen}>
+        <SheetTrigger
+          render={
+            <Button
+              size={size}
+              variant={variant}
+              className={className}
+              aria-label='Open customizer'
+            />
+          }
+        >
+          <Settings aria-hidden='true' />
+        </SheetTrigger>
+        <SheetContent side='right' showCloseButton={false}>
+          <SheetHeader className='relative border-b pr-24 text-start'>
+            <SheetTitle>Customizer</SheetTitle>
+            <SheetDescription>
+              Customize and preview in real time.
+            </SheetDescription>
+            <div className='absolute top-4 right-4 flex items-center gap-2'>
+              {resetButton}
+              <SheetClose
+                render={<Button size='icon' variant='ghost' />}
+              >
+                <X className='size-4' />
+                <span className='sr-only'>Close</span>
+              </SheetClose>
+            </div>
+          </SheetHeader>
+          {customizerBody}
+        </SheetContent>
+      </Sheet>
+    )
+  }
+
   return (
-    <Sheet modal='trap-focus'>
-      <SheetTrigger
+    <Drawer
+      modal
+      open={customizerOpen}
+      onOpenChange={setCustomizerOpen}
+      swipeDirection='right'
+    >
+      <DrawerTrigger
         render={
           <Button
             size={size}
             variant={variant}
             className={className}
-            aria-label='Open theme settings'
+            aria-label='Open customizer'
           />
         }
       >
         <Settings aria-hidden='true' />
-      </SheetTrigger>
-      <SheetContent className='flex flex-col'>
-        <SheetHeader className='pb-0 text-start'>
-          <SheetTitle>Theme Settings</SheetTitle>
-          <SheetDescription>
-            Adjust the appearance and layout to suit your preferences.
-          </SheetDescription>
-        </SheetHeader>
-        <div className='no-scrollbar min-h-0 flex-1 space-y-6 overflow-y-auto px-4'>
-          <ThemeConfig />
-          <SidebarConfig />
-          <LayoutConfig />
-          <DirConfig />
-          <CustomizerConfig customizer={customizer} setColor={setColor} />
-        </div>
-        <SheetFooter className='gap-2'>
-          <Button
-            variant='destructive'
-            onClick={handleReset}
-            aria-label='Reset all settings to default values'
-          >
-            Reset
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+      </DrawerTrigger>
+      <DrawerContent className='flex flex-col gap-0'>
+        <DrawerHeader className='relative border-b p-4 pr-24 text-start'>
+          <DrawerTitle>Customizer</DrawerTitle>
+          <DrawerDescription>
+            Customize and preview in real time.
+          </DrawerDescription>
+          <div className='absolute top-4 right-4 flex items-center gap-2'>
+            {resetButton}
+            <DrawerClose
+              render={<Button size='icon' variant='ghost' />}
+            >
+              <X className='size-4' />
+              <span className='sr-only'>Close</span>
+            </DrawerClose>
+          </div>
+        </DrawerHeader>
+        {customizerBody}
+      </DrawerContent>
+    </Drawer>
   )
 }
 
@@ -123,12 +227,12 @@ function ColorGroup({
   onValueChange: (value: string) => void
 }) {
   return (
-    <div className='flex flex-col gap-3'>
+    <div className='flex flex-col gap-2'>
       <Label>{label}</Label>
       <RadioGroupPrimitive
         value={value}
         onValueChange={onValueChange}
-        className='grid grid-cols-6 gap-3'
+        className='grid grid-cols-6 gap-2'
         aria-label={label}
       >
         {options.map((option) => (
@@ -141,21 +245,23 @@ function ColorGroup({
             aria-label={`${label}: ${option.label}`}
             title={option.label}
             className={cn(
-              'group relative flex size-9 cursor-pointer items-center justify-center rounded-md border border-border bg-transparent p-0 shadow-none outline-none',
-              'transition-shadow focus-visible:ring-2 focus-visible:ring-ring',
-              'data-checked:ring-2 data-checked:ring-offset-2 data-checked:ring-offset-background'
+              'group relative grid size-9 shrink-0 cursor-pointer place-items-center rounded-md border-0 p-0 shadow-none outline-none ring-1 ring-transparent',
+              'transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+              'data-checked:ring-2 data-checked:ring-primary data-checked:ring-offset-2 data-checked:ring-offset-background'
             )}
             style={
               {
-                '--tw-ring-color': option.value,
-                '--drawer-ring-color': option.value,
+                backgroundColor: option.value,
+                color:
+                  option.value === 'var(--foreground)'
+                    ? 'var(--background)'
+                    : '#ffffff',
               } as CSSProperties
             }
           >
-            <span
-              className='size-4 rounded-sm'
-              style={{ backgroundColor: option.value }}
-            />
+            <RadioPrimitive.Indicator>
+              <Check className='size-4 stroke-[3] text-current drop-shadow-sm' />
+            </RadioPrimitive.Indicator>
           </RadioPrimitive.Root>
         ))}
       </RadioGroupPrimitive>
@@ -171,23 +277,16 @@ function CustomizerConfig({
   setColor: (key: keyof CustomizerState, value: string) => void
 }) {
   return (
-    <section className='space-y-4 pb-4'>
-      <Separator />
-      <div className='space-y-1'>
-        <Badge>Theming</Badge>
-        <h3 className='text-sm font-semibold'>Theme Customizer</h3>
-        <p className='text-xs text-muted-foreground'>
-          Customize &amp; Preview in Real Time
-        </p>
-      </div>
+    <section className='flex flex-col gap-2'>
+      <Badge className='self-start'>Theming</Badge>
       <ColorGroup
-        label='Base Color'
-        options={BASE_COLOR_OPTIONS}
-        value={customizer.base}
-        onValueChange={(value) => setColor('base', value)}
+        label='Ground Color'
+        options={GROUND_COLOR_OPTIONS}
+        value={customizer.ground}
+        onValueChange={(value) => setColor('ground', value)}
       />
       <ColorGroup
-        label='Theme Color'
+        label='Paint Color'
         options={THEME_COLOR_OPTIONS}
         value={customizer.paint}
         onValueChange={(value) => setColor('paint', value)}
@@ -219,7 +318,7 @@ function SectionTitle({
   return (
     <div
       className={cn(
-        'mb-2 flex items-center gap-2 text-sm font-semibold text-muted-foreground',
+        'flex items-center gap-2 text-sm font-semibold text-muted-foreground',
         className
       )}
     >
@@ -228,12 +327,12 @@ function SectionTitle({
         <Button
           type='button'
           size='icon'
-          variant='secondary'
-          className='size-4 rounded-full'
+          variant='default'
+          className='size-5 rounded-sm'
           onClick={onReset}
           aria-label={resetAriaLabel}
         >
-          <RotateCcw className='size-3' />
+          <RotateCcw className='size-4' />
         </Button>
       )}
     </div>
@@ -277,14 +376,14 @@ function RadioGroupItem({
       >
         <RadioPrimitive.Indicator className='absolute top-0 right-0 z-10 translate-x-1/2 -translate-y-1/2'>
           <CircleCheck
-            className='size-6 fill-primary stroke-primary-foreground'
+            className='size-5 fill-primary stroke-primary-foreground'
             aria-hidden='true'
           />
         </RadioPrimitive.Indicator>
         <item.icon
           className={cn(
             !isTheme &&
-              'fill-muted-foreground stroke-muted-foreground group-data-checked:fill-primary group-data-checked:stroke-primary'
+            'fill-muted-foreground stroke-muted-foreground group-data-checked:fill-primary group-data-checked:stroke-primary'
           )}
           aria-hidden='true'
         />
@@ -305,7 +404,8 @@ function ThemeConfig() {
   const defaultTheme = 'system'
   const theme = currentTheme ?? defaultTheme
   return (
-    <div>
+    <div className='flex flex-col gap-2'>
+      <Badge className='self-start'>Layout</Badge>
       <SectionTitle
         title='Theme'
         showReset={theme !== defaultTheme}
@@ -315,7 +415,7 @@ function ThemeConfig() {
       <RadioGroupPrimitive
         value={theme}
         onValueChange={setTheme}
-        className='grid w-full max-w-md grid-cols-3 gap-4'
+        className='grid w-full max-w-md grid-cols-3 gap-2'
         aria-label='Select theme preference'
         aria-describedby='theme-description'
       >
@@ -349,7 +449,7 @@ function ThemeConfig() {
 function SidebarConfig() {
   const { defaultVariant, variant, setVariant } = useLayout()
   return (
-    <div className='max-md:hidden'>
+    <div className='flex flex-col gap-2 max-md:hidden'>
       <SectionTitle
         title='Sidebar'
         showReset={defaultVariant !== variant}
@@ -359,7 +459,7 @@ function SidebarConfig() {
       <RadioGroupPrimitive
         value={variant}
         onValueChange={setVariant}
-        className='grid w-full max-w-md grid-cols-3 gap-4'
+        className='grid w-full max-w-md grid-cols-3 gap-2'
         aria-label='Select sidebar style'
         aria-describedby='sidebar-description'
       >
@@ -397,7 +497,7 @@ function LayoutConfig() {
   const radioState = open ? 'default' : collapsible
 
   return (
-    <div className='max-md:hidden'>
+    <div className='flex flex-col gap-2 max-md:hidden'>
       <SectionTitle
         title='Layout'
         showReset={radioState !== 'default'}
@@ -417,7 +517,7 @@ function LayoutConfig() {
           setOpen(false)
           setCollapsible(v as Collapsible)
         }}
-        className='grid w-full max-w-md grid-cols-3 gap-4'
+        className='grid w-full max-w-md grid-cols-3 gap-2'
         aria-label='Select layout style'
         aria-describedby='layout-description'
       >
@@ -451,7 +551,7 @@ function LayoutConfig() {
 function DirConfig() {
   const { defaultDir, dir, setDir } = useDirection()
   return (
-    <div>
+    <div className='flex flex-col gap-2'>
       <SectionTitle
         title='Direction'
         showReset={defaultDir !== dir}
@@ -461,7 +561,7 @@ function DirConfig() {
       <RadioGroupPrimitive
         value={dir}
         onValueChange={setDir}
-        className='grid w-full max-w-md grid-cols-3 gap-4'
+        className='grid w-full max-w-md grid-cols-3 gap-2'
         aria-label='Select site direction'
         aria-describedby='direction-description'
       >
@@ -486,6 +586,92 @@ function DirConfig() {
       </RadioGroupPrimitive>
       <div id='direction-description' className='sr-only'>
         Choose between left-to-right or right-to-left site direction
+      </div>
+    </div>
+  )
+}
+
+function WidthConfig() {
+  const { defaultWidth, setWidth, width } = useLayout()
+
+  return (
+    <div className='flex flex-col gap-2'>
+      <SectionTitle
+        title='Width'
+        showReset={defaultWidth !== width}
+        onReset={() => setWidth(defaultWidth)}
+        resetAriaLabel='Reset page width to default'
+      />
+      <RadioGroupPrimitive
+        value={width}
+        onValueChange={(value) => setWidth(value as LayoutWidth)}
+        className='grid w-full max-w-md grid-cols-3 gap-2'
+        aria-label='Select page width'
+        aria-describedby='width-description'
+      >
+        {[
+          {
+            value: 'centered',
+            label: 'Centered',
+            icon: IconWidthCentered,
+          },
+          {
+            value: 'full-width',
+            label: 'Full width',
+            icon: IconWidthFull,
+          },
+        ].map((item) => (
+          <RadioGroupItem key={item.value} item={item} />
+        ))}
+      </RadioGroupPrimitive>
+      <div id='width-description' className='sr-only'>
+        Choose between a centered container or a full-width page
+      </div>
+    </div>
+  )
+}
+
+function NavbarBehaviorConfig() {
+  const {
+    defaultNavbarBehavior,
+    navbarBehavior,
+    setNavbarBehavior,
+  } = useLayout()
+
+  return (
+    <div className='flex flex-col gap-2'>
+      <SectionTitle
+        title='Navbar behavior'
+        showReset={defaultNavbarBehavior !== navbarBehavior}
+        onReset={() => setNavbarBehavior(defaultNavbarBehavior)}
+        resetAriaLabel='Reset navbar behavior to default'
+      />
+      <RadioGroupPrimitive
+        value={navbarBehavior}
+        onValueChange={(value) =>
+          setNavbarBehavior(value as NavbarBehavior)
+        }
+        className='grid w-full max-w-md grid-cols-3 gap-2'
+        aria-label='Select navbar behavior'
+        aria-describedby='navbar-behavior-description'
+      >
+        {[
+          {
+            value: 'sticky',
+            label: 'Sticky',
+            icon: IconNavbarSticky,
+          },
+          {
+            value: 'scroll',
+            label: 'Scroll',
+            icon: IconNavbarScroll,
+          },
+        ].map((item) => (
+          <RadioGroupItem key={item.value} item={item} />
+        ))}
+      </RadioGroupPrimitive>
+      <div id='navbar-behavior-description' className='sr-only'>
+        Choose whether the navbar stays visible or scrolls with the page
       </div>
     </div>
   )

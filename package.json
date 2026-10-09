@@ -130,7 +130,7 @@
   ],
   "scripts": {
     "build": "tsdown --minify",
-    "prepare": "bun install --ignore-scripts && bun run build",
+    "postinstall": "bun run build",
     "update": "bun update",
     "error": "bun build",
     "dev": "tsdown --watch",

@@ -130,7 +130,7 @@
   ],
   "scripts": {
     "build": "tsdown --minify",
-    "prepare": "bun build",
+    "prepare": "bun run build",
     "update": "bun update",
     "error": "bun build",
     "dev": "tsdown --watch",

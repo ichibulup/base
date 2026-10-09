@@ -1,6 +1,6 @@
 {
   "name": "@goraricorp/base",
-  "version": "0.3.2",
+  "version": "0.0.1",
   "description": "Shared shadcn-based UI package",
   "type": "module",
   "author": "Ichibulup",
@@ -130,7 +130,7 @@
   ],
   "scripts": {
     "build": "tsdown --minify",
-    "postinstall": "bun run build",
+    "prepare": "bun run build",
     "update": "bun update",
     "error": "bun build",
     "dev": "tsdown --watch",
